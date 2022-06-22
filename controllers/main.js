@@ -1,5 +1,23 @@
+const CustomAPIError = require("../errors/custom-error");
+
+const jwt = require("jsonwebtoken");
+
 const login = async (req, res) => {
-  res.send("Fake Login/Register/Signup");
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    throw new CustomAPIError("Please provide email and password", 400);
+  }
+
+  // just for demo, normally provided by DB
+  const id = new Date().getDate();
+
+  // .env file is holding an example secret - this secret is usually longer and more secure - usually through bcrpt
+  const token = jwt.sign({ id, username }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+
+  res.status(200).json({ msg: "user created", token });
 };
 
 const dashboard = async (req, res) => {
